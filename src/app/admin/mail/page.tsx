@@ -156,13 +156,7 @@ export default function MailSettingsPage() {
                 <td className="px-4 py-2.5 font-mono text-gray-500 text-[11px]">{mail.type}</td>
                 <td className="px-4 py-2.5 text-gray-600">{mail.to}</td>
                 <td className="px-4 py-2.5 text-gray-700 text-left max-w-xs truncate">{mail.subject}</td>
-                <td className="px-4 py-2.5">
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                    mail.status === "성공" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"
-                  }`}>
-                    {mail.status}
-                  </span>
-                </td>
+                <td className="px-4 py-2.5 text-gray-600">{mail.status}</td>
                 <td className="px-4 py-2.5 text-gray-400 whitespace-nowrap">{mail.time}</td>
               </tr>
             ))}

@@ -183,13 +183,7 @@ export default function LogsAigatePage() {
                 <td className="px-3 py-2.5 text-gray-600">{log.departmentName}</td>
                 <td className="px-3 py-2.5 text-gray-600">{log.positionName}</td>
                 <td className="px-3 py-2.5 text-gray-500 whitespace-nowrap">{log.occurredAt}</td>
-                <td className="px-3 py-2.5">
-                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                    log.toolType === "INTERNAL" ? "bg-blue-50 text-blue-600" : "bg-gray-100 text-gray-600"
-                  }`}>
-                    {log.toolType === "INTERNAL" ? "내부" : "외부"}
-                  </span>
-                </td>
+                <td className="px-3 py-2.5 text-gray-600">{log.toolType === "INTERNAL" ? "내부" : "외부"}</td>
                 <td className="px-3 py-2.5 text-gray-700">{log.toolName}</td>
                 <td className="px-3 py-2.5 text-gray-600">{log.purpose}</td>
                 <td className="px-3 py-2.5 text-gray-500 font-mono text-[11px]">{log.fpProjectCode}</td>
