@@ -7,26 +7,26 @@ const SIDEBAR_SECTIONS = [
   {
     title: "대시보드",
     items: [
-      { label: "대시보드", href: "/admin/dashboard" },
+      { label: "대시보드", href: "/" },
     ],
   },
   {
     title: "사용 로그",
     items: [
-      { label: "MICE DX 사용로그", href: "/admin/logs" },
-      { label: "AI Gate 사용로그", href: "/admin/logs-aigate" },
+      { label: "MICE DX 사용로그", href: "/logs" },
+      { label: "AI Gate 사용로그", href: "/logs-aigate" },
     ],
   },
   {
     title: "메일 관리",
     items: [
-      { label: "메일 설정", href: "/admin/mail" },
-      { label: "메일 템플릿", href: "/admin/mail-templates" },
+      { label: "메일 설정", href: "/mail" },
+      { label: "메일 템플릿", href: "/mail-templates" },
     ],
   },
 ];
 
-export default function AdminLayout({
+export default function AdminShell({
   children,
 }: {
   children: React.ReactNode;
@@ -75,21 +75,11 @@ export default function AdminLayout({
             </div>
           ))}
         </nav>
-
-        {/* Bottom */}
-        <div className="border-t border-gray-200 px-5 py-3">
-          <Link
-            href="/"
-            className="text-[11px] text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            ← MICE DX 홈으로
-          </Link>
-        </div>
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Bar - MICE DX 헤더 스타일 */}
+        {/* Top Bar */}
         <header className="h-12 bg-[#1a1a1a] flex items-center justify-between px-6 shrink-0">
           <div className="flex items-center gap-6">
             <span className="text-sm font-medium text-white">MICE DX 관리자</span>

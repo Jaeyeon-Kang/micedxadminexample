@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AdminShell from "./AdminShell";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EZ 데이터허브 - MICE DX",
+  title: "EZ 데이터허브 - MICE DX 관리자",
   description: "MICE DX Admin Prototype",
 };
 
@@ -27,7 +28,9 @@ export default function RootLayout({
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full">
+        <AdminShell>{children}</AdminShell>
+      </body>
     </html>
   );
 }
