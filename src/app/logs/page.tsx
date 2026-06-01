@@ -1,17 +1,32 @@
 "use client";
 
 import { useState } from "react";
+import { exportToExcel, fetchAllPages } from "@/lib/excel-export";
+import { Pagination } from "@/components/Pagination";
 
 const MOCK_LOGS = [
   { id: 1, userNo: "U001", user: "김철수", dept: "ICT사업부", position: "과장", action: "로그인", page: "메인", ip: "192.168.1.10", time: "2026-04-10 09:15:23" },
   { id: 2, userNo: "U002", user: "이영희", dept: "엔지니어링", position: "대리", action: "프로젝트 등록", page: "Ongoing PRJ", ip: "192.168.1.22", time: "2026-04-10 09:22:41" },
-  { id: 3, userNo: "U003", user: "박민수", dept: "ICT사업부", position: "차장", action: "파일 다운로드", page: "자료실", ip: "192.168.1.15", time: "2026-04-10 09:30:05" },
+  { id: 3, userNo: "U003", user: "박민수", dept: "ICT사업부", position: "차장", action: "파일 다운로드", page: "데이터허브", ip: "192.168.1.15", time: "2026-04-10 09:30:05" },
   { id: 4, userNo: "U004", user: "정수연", dept: "경영지원", position: "사원", action: "제안서 제출", page: "프로젝트 실적", ip: "192.168.1.33", time: "2026-04-10 09:45:12" },
   { id: 5, userNo: "U005", user: "최진욱", dept: "ICT사업부", position: "과장", action: "메일 발송", page: "관리자", ip: "192.168.1.5", time: "2026-04-10 10:02:30" },
   { id: 6, userNo: "U006", user: "홍길동", dept: "컨설팅", position: "팀장", action: "로그인", page: "메인", ip: "10.61.24.50", time: "2026-04-10 10:15:00" },
   { id: 7, userNo: "U007", user: "강미나", dept: "스마트관광", position: "대리", action: "수행내역서 제출", page: "프로젝트 실적", ip: "192.168.1.44", time: "2026-04-10 10:30:18" },
-  { id: 8, userNo: "U001", user: "김철수", dept: "ICT사업부", position: "과장", action: "AI Gate 접속", page: "AI 게이트", ip: "192.168.1.10", time: "2026-04-10 10:45:55" },
+  { id: 8, userNo: "U001", user: "김철수", dept: "ICT사업부", position: "과장", action: "AI 게이트 접속", page: "AI 게이트", ip: "192.168.1.10", time: "2026-04-10 10:45:55" },
 ];
+
+async function searchAdminLogs(
+  page: number,
+  size: number,
+  filters: { userName: string; deptName: string },
+) {
+  const all = MOCK_LOGS.filter(
+    (log) =>
+      (!filters.userName || log.user.includes(filters.userName)) &&
+      (!filters.deptName || log.dept.includes(filters.deptName)),
+  );
+  return { items: all.slice(page * size, (page + 1) * size), totalCount: all.length };
+}
 
 export default function LogsPage() {
   const [dateFrom, setDateFrom] = useState("2026-04-03");
@@ -19,6 +34,7 @@ export default function LogsPage() {
   const [userName, setUserName] = useState("");
   const [deptName, setDeptName] = useState("");
   const [pageSize, setPageSize] = useState(20);
+  const [page, setPage] = useState(0);
 
   const filteredLogs = MOCK_LOGS.filter(
     (log) =>
@@ -27,10 +43,10 @@ export default function LogsPage() {
   );
 
   return (
-    <div>
+    <div className="flex flex-col h-[calc(100vh-6rem)]">
       <div className="mb-5">
-        <h2 className="text-lg font-bold">MICE DX 사용로그</h2>
-        <p className="text-xs text-gray-500 mt-1">MICE DX 사용자 접속 및 활동 이력을 확인하는 화면입니다.</p>
+        <h2 className="text-lg font-bold">데이터허브 사용 로그</h2>
+        <p className="text-xs text-gray-500 mt-1">데이터허브 사용자 접속 및 활동 이력을 확인하는 화면입니다.</p>
       </div>
 
       {/* Filters */}
@@ -66,7 +82,17 @@ export default function LogsPage() {
               초기화
             </button>
           </div>
-          <button className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-1.5 rounded text-sm hover:bg-emerald-100 transition-colors h-[34px] ml-auto">
+          <button
+            onClick={async () => {
+              const all = await fetchAllPages((p, s) => searchAdminLogs(p, s, { userName, deptName }));
+              exportToExcel(all, {
+                filenamePrefix: "데이터허브 사용 로그",
+                headers: ["NO", "UserNo", "사용자", "부서", "직급", "활동", "페이지", "IP", "일시"],
+                mapRow: (r) => [r.id, r.userNo, r.user, r.dept, r.position, r.action, r.page, r.ip, r.time],
+              });
+            }}
+            className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-1.5 rounded text-sm hover:bg-emerald-100 transition-colors h-[34px] ml-auto"
+          >
             로그 다운로드
           </button>
         </div>
@@ -84,9 +110,9 @@ export default function LogsPage() {
       </div>
 
       {/* Log Table */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-x-auto shadow-sm">
+      <div className="bg-white border border-gray-200 rounded-lg overflow-auto shadow-sm flex-1 min-h-0">
         <table className="w-full min-w-[1100px]">
-          <thead>
+          <thead className="sticky top-0 z-10">
             <tr className="text-[11px] text-gray-500 border-b border-gray-200 bg-gray-50 text-center">
               <th className="px-3 py-2.5 font-medium">UserNo</th>
               <th className="px-3 py-2.5 font-medium">사용자</th>
@@ -118,21 +144,11 @@ export default function LogsPage() {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-center mt-4 gap-1">
-        <button className="w-7 h-7 rounded text-xs bg-gray-100 text-gray-400 border border-gray-200">‹</button>
-        {[1, 2, 3].map((page) => (
-          <button
-            key={page}
-            className={`w-7 h-7 rounded text-xs ${
-              page === 1 ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200"
-            }`}
-          >
-            {page}
-          </button>
-        ))}
-        <button className="w-7 h-7 rounded text-xs bg-gray-100 text-gray-400 border border-gray-200">›</button>
-      </div>
+      <Pagination
+        page={page}
+        totalPages={Math.max(1, Math.ceil(filteredLogs.length / pageSize))}
+        onChange={setPage}
+      />
     </div>
   );
 }
