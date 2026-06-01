@@ -24,6 +24,9 @@ function randomDate(daysBack: number): string {
   return d.toISOString().replace("T", " ").slice(0, 19);
 }
 
+// ── Session ──
+export const SESSION_COOKIE = "micedxadmin_demo_session";
+
 // ── Demo User ──
 export const DEMO_USER = {
   userKey: "demo-user-001",

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import EntryExchange from "./EntryExchange";
 
 type SearchParams = Promise<{
   entryToken?: string;
@@ -12,15 +13,11 @@ export default async function EntryPage({
 }) {
   const params = await searchParams;
   const entryToken = params.entryToken ?? "";
-  const returnTo = params.returnTo ?? "/";
-
-  console.log("[entry/page] entryToken:", entryToken ? `${entryToken.slice(0, 20)}…` : "(missing)");
-  console.log("[entry/page] returnTo:", returnTo);
+  const returnTo = params.returnTo ?? "/dashboard";
 
   if (!entryToken) {
     redirect("/entry/failure?reason=missing-token");
   }
 
-  const target = new URLSearchParams({ entryToken, returnTo });
-  redirect(`/api/admin/auth/exchange-entry-token?${target.toString()}`);
+  return <EntryExchange entryToken={entryToken} returnTo={returnTo} />;
 }

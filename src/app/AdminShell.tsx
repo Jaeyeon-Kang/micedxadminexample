@@ -144,6 +144,20 @@ export default function AdminShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [sessionToken, setSessionToken] = useState("");
+
+  const bare = pathname?.startsWith("/portal") || pathname?.startsWith("/entry");
+
+  useEffect(() => {
+    if (bare) return;
+    fetch("/api/admin/me", { credentials: "include", cache: "no-store" })
+      .then((r) => r.json())
+      .then((j) => setSessionToken(j?.data?.sessionToken ?? ""))
+      .catch(() => {});
+  }, [bare]);
+
+  // /portal, /entry 는 별도 출발지 화면이므로 관리자 셸 없이 그대로 렌더
+  if (bare) return <>{children}</>;
 
   return (
     <div className="min-h-screen flex bg-gray-50 text-gray-900">
@@ -179,11 +193,22 @@ export default function AdminShell({
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Bar */}
         <header className="h-12 bg-[#1a1a1a] flex items-center justify-between px-6 shrink-0">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
             <span className="text-sm font-medium text-white">AXDX 관리자</span>
+            {sessionToken && (
+              <span className="hidden items-center gap-1.5 rounded-full bg-emerald-900/40 px-2.5 py-1 text-[11px] text-emerald-300 md:inline-flex">
+                ✓ SSO 진입 · 토큰 <code className="font-mono text-emerald-200">{sessionToken}</code>
+              </span>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <CurrentUserBadge />
+            <a
+              href="/api/admin/logout"
+              className="rounded border border-gray-600 px-2.5 py-1 text-[11px] text-gray-300 transition hover:bg-gray-800"
+            >
+              로그아웃
+            </a>
           </div>
         </header>
 
