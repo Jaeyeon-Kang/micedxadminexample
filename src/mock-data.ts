@@ -3,12 +3,22 @@
 
 const names = ["김민수", "이지현", "박서준", "최유나", "정태영", "한소희", "오현우", "윤미래", "송재호", "장예진"];
 const depts = ["기획팀", "개발팀", "마케팅팀", "운영팀", "디자인팀"];
+const positions = ["사원", "대리", "과장", "차장", "부장"];
+const jobs = ["팀원", "파트장", "팀장"];
 const ips = ["192.168.1.10", "192.168.1.25", "10.0.0.42", "172.16.0.8", "192.168.2.100"];
+const devices = ["PC", "Mobile"];
+const oss = ["Windows 11", "macOS 14", "iOS 17", "Android 14"];
 const browsers = ["Chrome 125", "Safari 18", "Edge 125", "Firefox 128"];
+const userAgents = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/605.1.15 Safari/18.0",
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0) AppleWebKit/605.1.15 Mobile",
+];
 const tools = ["AI 문서 분석", "회의록 요약", "데이터 시각화", "코드 리뷰 봇", "번역 도우미"];
 const purposes = ["업무 보고서 작성", "데이터 분석", "문서 번역", "코드 검토", "회의 정리"];
 const menus = ["대시보드", "사용 로그", "AI 파트너", "메일 관리", "설정"];
 const buttons = ["조회", "다운로드", "검색", "필터", "엑셀 내보내기", "상세보기"];
+const urls = ["/dashboard", "/logs/login-history", "/ai-partners", "/mail", "/logs/click-history"];
 const files = ["report_2026Q1.xlsx", "meeting_notes.pdf", "data_export.csv", "presentation.pptx", "analysis.docx"];
 
 function randomItem<T>(arr: T[]): T {
@@ -41,81 +51,143 @@ export const DEMO_USER = {
   positionName: "관리자",
 };
 
-// ── Login History ──
+// ── Login History ──  (fields match login-history page)
 export function generateLoginHistory(count = 20) {
   return Array.from({ length: count }, (_, i) => ({
-    logId: 1000 + i,
-    userName: randomItem(names),
-    departmentName: randomItem(depts),
-    loginAt: randomDate(30),
-    clientIp: randomItem(ips),
-    browserInfo: randomItem(browsers),
-    loginType: "SSO",
-    result: Math.random() > 0.1 ? "SUCCESS" : "FAIL",
+    rowNum: i + 1,
+    userNo: `U${String(10000 + i)}`,
+    userNm: randomItem(names),
+    departmentNm: randomItem(depts),
+    positionNm: randomItem(positions),
+    jobNm: randomItem(jobs),
+    ipAddress: randomItem(ips),
+    userAgent: randomItem(userAgents),
+    deviceGbn: randomItem(devices),
+    osNm: randomItem(oss),
+    browserNm: randomItem(browsers),
+    createdDt: randomDate(30),
   }));
 }
 
-// ── Login Count ──
+// ── Login Count ──  (fields match login-count page)
 export function generateLoginCount(count = 10) {
   return Array.from({ length: count }, (_, i) => ({
-    userName: names[i % names.length],
-    departmentName: depts[i % depts.length],
-    totalCount: Math.floor(Math.random() * 50) + 5,
-    lastLoginAt: randomDate(7),
+    rowNum: i + 1,
+    userNo: `U${String(10000 + i)}`,
+    userNm: names[i % names.length],
+    departmentNm: depts[i % depts.length],
+    positionNm: positions[i % positions.length],
+    jobNm: jobs[i % jobs.length],
+    loginCount: Math.floor(Math.random() * 50) + 5,
   }));
 }
 
-// ── Download History ──
+// ── Download History ──  (fields match download-history page)
 export function generateDownloadHistory(count = 15) {
+  return Array.from({ length: count }, (_, i) => {
+    const f = randomItem(files);
+    return {
+      rowNum: i + 1,
+      logNo: 2000 + i,
+      fileNm: f,
+      divisionNm: randomItem(depts),
+      fileSize: `${(Math.random() * 5 + 0.1).toFixed(1)} MB`,
+      ipAddr: randomItem(ips),
+      filePath: `/data/exports/${f}`,
+      userNo: `U${String(10000 + i)}`,
+      userId: `user${i + 1}`,
+      userNm: randomItem(names),
+      userDivisionNm: randomItem(depts),
+      departmentNm: randomItem(depts),
+      jobNm: randomItem(jobs),
+      createDt: randomDate(14),
+    };
+  });
+}
+
+// ── Click History — 6 view types ──
+export function generateClickList(count = 20) {
   return Array.from({ length: count }, (_, i) => ({
-    logId: 2000 + i,
-    userName: randomItem(names),
-    departmentName: randomItem(depts),
-    fileName: randomItem(files),
-    filePath: `/data/exports/${randomItem(files)}`,
-    fileSize: Math.floor(Math.random() * 5000) + 100,
-    downloadAt: randomDate(14),
-    clientIp: randomItem(ips),
+    rowNum: i + 1,
+    userNo: `U${String(10000 + i)}`,
+    userNm: randomItem(names),
+    departmentNm: randomItem(depts),
+    positionNm: randomItem(positions),
+    jobNm: randomItem(jobs),
+    clickDt: randomDate(14),
+    pageNm: randomItem(menus),
+    buttonNm: randomItem(buttons),
+    url: randomItem(urls),
   }));
 }
 
-// ── Click History ──
-export function generateClickHistory(count = 20) {
-  return Array.from({ length: count }, (_, i) => ({
-    logId: 3000 + i,
-    userName: randomItem(names),
-    departmentName: randomItem(depts),
-    menuName: randomItem(menus),
-    buttonName: randomItem(buttons),
-    clickAt: randomDate(14),
-    clientIp: randomItem(ips),
-  }));
-}
-
-export function generateClickDateStat(count = 7) {
+export function generateClickDateStat(count = 14) {
   return Array.from({ length: count }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - i);
     return {
-      date: d.toISOString().slice(0, 10),
-      totalCount: Math.floor(Math.random() * 100) + 10,
+      rowNum: i + 1,
+      clickDate: d.toISOString().slice(0, 10),
+      pageNm: randomItem(menus),
+      buttonNm: randomItem(buttons),
+      url: randomItem(urls),
+      totalClicks: Math.floor(Math.random() * 100) + 10,
     };
   });
 }
 
 export function generateClickButtonStat() {
-  return buttons.map((b) => ({
-    buttonName: b,
-    totalCount: Math.floor(Math.random() * 200) + 20,
+  return buttons.map((b, i) => ({
+    rowNum: i + 1,
+    pageNm: randomItem(menus),
+    buttonNm: b,
+    url: randomItem(urls),
+    totalClicks: Math.floor(Math.random() * 200) + 20,
+  }));
+}
+
+export function generateClickUserButtonStat(count = 20) {
+  return Array.from({ length: count }, (_, i) => ({
+    rowNum: i + 1,
+    userNo: `U${String(10000 + i)}`,
+    userNm: randomItem(names),
+    departmentNm: randomItem(depts),
+    positionNm: randomItem(positions),
+    jobNm: randomItem(jobs),
+    pageNm: randomItem(menus),
+    buttonNm: randomItem(buttons),
+    url: randomItem(urls),
+    totalClicks: Math.floor(Math.random() * 80) + 5,
   }));
 }
 
 export function generateClickUserStat(count = 10) {
   return Array.from({ length: count }, (_, i) => ({
-    userName: names[i % names.length],
-    departmentName: depts[i % depts.length],
-    totalCount: Math.floor(Math.random() * 80) + 5,
+    rowNum: i + 1,
+    userNo: `U${String(10000 + i)}`,
+    userNm: names[i % names.length],
+    departmentNm: depts[i % depts.length],
+    positionNm: positions[i % positions.length],
+    jobNm: jobs[i % jobs.length],
+    totalClicks: Math.floor(Math.random() * 80) + 5,
   }));
+}
+
+export function generateClickUserDateStat(count = 20) {
+  return Array.from({ length: count }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (i % 14));
+    return {
+      rowNum: i + 1,
+      userNo: `U${String(10000 + i)}`,
+      userNm: randomItem(names),
+      departmentNm: randomItem(depts),
+      positionNm: randomItem(positions),
+      jobNm: randomItem(jobs),
+      clickDate: d.toISOString().slice(0, 10),
+      totalClicks: Math.floor(Math.random() * 50) + 3,
+    };
+  });
 }
 
 // ── AI Gate Logs ──
@@ -143,46 +215,64 @@ export function generateAIGateLogs(count = 30) {
   }));
 }
 
-// ── Mail History ──
-export function generateMailHistory(count = 10) {
-  return Array.from({ length: count }, (_, i) => ({
-    mailId: 5000 + i,
-    mailType: ["WELCOME", "REPORT", "NOTICE"][i % 3],
-    subject: ["가입 환영 메일", "월간 리포트 발송", "공지사항 안내"][i % 3],
-    recipientEmail: `user${i + 1}@demo.com`,
-    recipientName: randomItem(names),
-    sentAt: randomDate(30),
-    status: Math.random() > 0.1 ? "SUCCESS" : "FAIL",
-    errorMessage: null,
+// ── Mail Types ──
+export const MAIL_TYPE_LIST: { mailType: string; typeName: string }[] = [
+  { mailType: "BA_PROPOSAL_SUBMITTED", typeName: "제안서 저작권 등록 완료" },
+  { mailType: "BID_RESULT_ENTERED", typeName: "프로젝트 코드 발급 완료" },
+  { mailType: "OPERATION_DATA_SUBMITTED", typeName: "운영자료 제출 완료" },
+  { mailType: "PERFORMANCE_REPORT_SUBMITTED", typeName: "수행내역서 제출 완료" },
+  { mailType: "PROJECT_CREATED", typeName: "신규 프로젝트 등록 안내" },
+  { mailType: "PROPOSAL_SUBMITTED", typeName: "제안서 제출 완료 확인" },
+];
+
+// ── Mail History ──  (fields match mail page; response is { list, totalCount })
+export function generateMailHistory(count = 25) {
+  return Array.from({ length: count }, (_, i) => {
+    const t = MAIL_TYPE_LIST[i % MAIL_TYPE_LIST.length];
+    const ok = Math.random() > 0.12;
+    return {
+      historyNo: 5000 + i,
+      mailType: t.mailType,
+      subject: `[${t.typeName}] 안내 메일`,
+      toList: `user${i + 1}@example.com`,
+      ccList: i % 3 === 0 ? `manager${i + 1}@example.com` : null,
+      bccList: null,
+      status: ok ? "SUCCESS" : "FAIL",
+      errorMessage: ok ? null : "SMTP timeout",
+      sendDt: randomDate(30),
+      body: `<p>${t.typeName} 처리가 완료되었습니다.</p>`,
+    };
+  });
+}
+
+// ── Mail Templates ──  (fields match mail-templates page; response is array)
+export function generateMailTemplates() {
+  return MAIL_TYPE_LIST.map((t) => ({
+    mailType: t.mailType,
+    typeName: t.typeName,
+    subjectTemplate: `[${t.typeName}] {{projectTitle}}`,
+    bodyTemplate: `<p>안녕하세요.</p><p>{{projectTitle}} 건의 ${t.typeName} 안내드립니다.</p>`,
+    createDt: "2026-03-01 09:00:00",
+    updateDt: "2026-05-01 14:30:00",
   }));
 }
 
-// ── Mail Templates ──
-export const MAIL_TEMPLATES = [
-  {
-    mailType: "WELCOME",
-    subject: "MICE DX 가입을 환영합니다",
-    body: "<h1>환영합니다!</h1><p>MICE DX 플랫폼에 가입해 주셔서 감사합니다.</p><p>궁금한 점이 있으시면 언제든 문의해 주세요.</p>",
-    updatedAt: "2026-05-01 10:00:00",
-  },
-  {
-    mailType: "REPORT",
-    subject: "월간 사용 리포트",
-    body: "<h1>월간 리포트</h1><p>이번 달 사용 현황을 안내드립니다.</p><ul><li>로그인 횟수: {{loginCount}}</li><li>AI 도구 사용: {{toolUsage}}</li></ul>",
-    updatedAt: "2026-04-15 14:30:00",
-  },
-];
-
-// ── Mail Recipients ──
-export function generateRecipients(mailType: string, count = 5) {
-  return Array.from({ length: count }, (_, i) => ({
-    id: 6000 + i,
-    mailType,
-    email: `recipient${i + 1}@demo.com`,
-    name: randomItem(names),
-    createdAt: randomDate(60),
-    active: true,
-  }));
+// ── Mail Recipients ──  (response is { TO, CC, BCC })
+export function generateRecipients(mailType: string) {
+  const mk = (recipientType: string, n: number, base: number) =>
+    Array.from({ length: n }, (_, i) => ({
+      recipientNo: base + i,
+      name: randomItem(names),
+      email: `${recipientType.toLowerCase()}${i + 1}@example.com`,
+      department: randomItem(depts),
+      recipientType,
+      mailType,
+    }));
+  return {
+    TO: mk("TO", 3, 6000),
+    CC: mk("CC", 2, 6100),
+    BCC: mk("BCC", 1, 6200),
+  };
 }
 
 // ── AI Partners ──

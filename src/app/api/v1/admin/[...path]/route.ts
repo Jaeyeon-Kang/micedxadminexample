@@ -3,10 +3,12 @@ import {
   generateLoginHistory,
   generateLoginCount,
   generateDownloadHistory,
-  generateClickHistory,
+  generateClickList,
   generateClickDateStat,
   generateClickButtonStat,
+  generateClickUserButtonStat,
   generateClickUserStat,
+  generateClickUserDateStat,
   AI_PARTNERS,
 } from "@/mock-data";
 
@@ -58,17 +60,24 @@ export async function POST(request: NextRequest, ctx: { params: Promise<{ path: 
   if (joined.startsWith("click-log/")) {
     const sub = joined.replace("click-log/", "");
     if (sub === "list/search") {
-      return NextResponse.json({ result: "SUCCESS", data: paginate(generateClickHistory(40), page, size) });
+      return NextResponse.json({ result: "SUCCESS", data: paginate(generateClickList(40), page, size) });
     }
     if (sub === "date-stat/search") {
-      return NextResponse.json({ result: "SUCCESS", data: { list: generateClickDateStat(14), totalCount: 14 } });
+      const stats = generateClickDateStat(14);
+      return NextResponse.json({ result: "SUCCESS", data: { list: stats, totalCount: stats.length } });
     }
     if (sub === "button-stat/search") {
       const stats = generateClickButtonStat();
       return NextResponse.json({ result: "SUCCESS", data: { list: stats, totalCount: stats.length } });
     }
-    if (sub === "user-stat/search" || sub === "user-button-stat/search" || sub === "user-date-stat/search") {
+    if (sub === "user-button-stat/search") {
+      return NextResponse.json({ result: "SUCCESS", data: paginate(generateClickUserButtonStat(30), page, size) });
+    }
+    if (sub === "user-stat/search") {
       return NextResponse.json({ result: "SUCCESS", data: paginate(generateClickUserStat(20), page, size) });
+    }
+    if (sub === "user-date-stat/search") {
+      return NextResponse.json({ result: "SUCCESS", data: paginate(generateClickUserDateStat(30), page, size) });
     }
   }
 
